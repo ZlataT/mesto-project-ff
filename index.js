@@ -7,13 +7,13 @@ import {createCard,likeCard, handleAddCardFormSubmit,deleteCard} from './scripts
 const page = document.querySelector('.page'); //все элементы body 
 const cardsContainer = page.querySelector('.places__list'); //элемент куда будем вставлять карточки
 
-const popupTypeEdit = page.querySelector('.popup_type_edit'); //модалка редактирования профиля
+const popupTypeEditProfile = page.querySelector('.popup_type_edit'); //модалка редактирования профиля
 const profileEditButton = page.querySelector('.profile__edit-button');
 
 const popupTypeNewCard = page.querySelector('.popup_type_new-card'); //модалка создания новой карточки
 const cardAddButton= page.querySelector('.profile__add-button');
 
-const buttonClosePopups = page.querySelectorAll('.popup__close');
+const buttonsClosePopups = page.querySelectorAll('.popup__close');
 
 
 // @todo: Вывести карточки на страницу
@@ -23,7 +23,7 @@ initialCards.forEach(function(element){
 })
 
 // слушатель на кнопку закрытия модального окна
-buttonClosePopups.forEach (function (button){
+buttonsClosePopups.forEach (function (button){
   button.addEventListener('click', function(evt) {
     const modal = evt.target.closest('.popup');
     closeModal(modal);
@@ -47,7 +47,7 @@ profileEditButton.addEventListener('click', openEditProfilePopup);
 function openEditProfilePopup(){
   nameEditProfileInput.value = profileTitle.textContent;
   descriptionEditProfileInput.value = profileDescription.textContent;
-  openModal(popupTypeEdit);
+  openModal(popupTypeEditProfile);
 }
 
 //функиция сохрания изменений
@@ -60,7 +60,7 @@ function handleProfileFormSubmit(evt) {
   profileTitle.textContent = newName;
   profileDescription.textContent = newDescription;
 
-  closeModal(popupTypeEdit);
+  closeModal(popupTypeEditProfile);
 }
 
 modalEditProfile.addEventListener('submit', handleProfileFormSubmit); 
@@ -80,15 +80,15 @@ const formLinkImgPlace = popupFormNewPlace['link']
 
 popupFormNewPlace.addEventListener('submit',handleAddCardFormSubmit)
 
+const popupImageCard = document.querySelector('.popup_type_image');
+const popupImageElmCard = popupImageCard.querySelector('.popup__image');
+const popupCaptionElmCard = popupImageCard.querySelector('.popup__caption');
+
 //------------------Модалка изображения карточки-------
 function openPopupCard(link, name){
-  const popupImage = document.querySelector('.popup_type_image');
-  const popupImageElm = popupImage.querySelector('.popup__image');
-  const popupCaptionElm = popupImage.querySelector('.popup__caption');
-
-  popupImageElm.src = link;
-  popupImageElm.alt = name;
-  popupCaptionElm.textContent = name;
+  popupImageElmCard.src = link;
+  popupImageElmCard.alt = name;
+  popupCaptionElmCard.textContent = name;
 
   openModal(popupImage);
 }
