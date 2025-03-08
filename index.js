@@ -13,7 +13,7 @@ const profileEditButton = page.querySelector('.profile__edit-button');
 const popupTypeNewCard = page.querySelector('.popup_type_new-card'); //модалка создания новой карточки
 const cardAddButton= page.querySelector('.profile__add-button');
 
-const buttonClosePopup = page.querySelectorAll('.popup__close');
+const buttonClosePopups = page.querySelectorAll('.popup__close');
 
 
 // @todo: Вывести карточки на страницу
@@ -23,7 +23,7 @@ initialCards.forEach(function(element){
 })
 
 // слушатель на кнопку закрытия модального окна
-buttonClosePopup.forEach (function (button){
+buttonClosePopups.forEach (function (button){
   button.addEventListener('click', function(evt) {
     const modal = evt.target.closest('.popup');
     closeModal(modal);
@@ -42,16 +42,16 @@ const nameEditProfileInput = modalEditProfile.name;
 const descriptionEditProfileInput = modalEditProfile.description;
 
 //функция заполнения и открытия модульного окна редактирования профиля
-profileEditButton.addEventListener('click', openEditPopup);
+profileEditButton.addEventListener('click', openEditProfilePopup);
 
-function openEditPopup(){
+function openEditProfilePopup(){
   nameEditProfileInput.value = profileTitle.textContent;
   descriptionEditProfileInput.value = profileDescription.textContent;
   openModal(popupTypeEdit);
 }
 
 //функиция сохрания изменений
-function handleFormSubmit(evt) {
+function handleProfileFormSubmit(evt) {
   evt.preventDefault();
 
   const newName = nameEditProfileInput.value;
@@ -63,7 +63,7 @@ function handleFormSubmit(evt) {
   closeModal(popupTypeEdit);
 }
 
-modalEditProfile.addEventListener('submit', handleFormSubmit); 
+modalEditProfile.addEventListener('submit', handleProfileFormSubmit); 
 
 //----------- модалка добавления карточки---------
 
@@ -80,7 +80,7 @@ const formLinkImgPlace = popupFormNewPlace['link']
 
 popupFormNewPlace.addEventListener('submit',handleAddCardFormSubmit)
 
-//------------------Модалка изображения-------
+//------------------Модалка изображения карточки-------
 function openPopupCard(link, name){
   const popupImage = document.querySelector('.popup_type_image');
   const popupImageElm = popupImage.querySelector('.popup__image');
