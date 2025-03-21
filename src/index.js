@@ -128,7 +128,7 @@ cardAddButton.addEventListener('click', () => {
 
 enableValidation(validationConfig);
 
-return fetch('https://nomoreparties.co/v1/wff-cohort-34/cards', {
+fetch('https://nomoreparties.co/v1/wff-cohort-34/cards', {
   headers: {
     authorization: '9e1f29a7-b0e6-43a9-ad98-57be15c5122f'
   }
@@ -145,3 +145,4 @@ return fetch('https://nomoreparties.co/v1/wff-cohort-34/cards', {
     },
   })
    
+  
