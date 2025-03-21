@@ -1,17 +1,3 @@
-//добавление новой карточки
-function handleAddCardFormSubmit(evt){
-  evt.preventDefault();
-  
-  const namePlace = formPlaceName.value;
-  const linkPlaceImage = formLinkImgPlace.value;
-  
-  const newCard = createCard (namePlace, linkPlaceImage, deleteCard, likeCard, openPopupCard)
-  
-  cardsContainer.prepend(newCard);
-  closeModal(popupTypeNewCard);
-  
-  popupFormNewPlace.reset();
-}
 
   
 // @todo: Функция удаления карточки
@@ -42,4 +28,4 @@ function createCard (name, link, оnDelete, like, openModalCard){
 	return cardElemet; // возвращение шаблона подготовленного к заполнению
 }
 
-export {createCard,likeCard, handleAddCardFormSubmit,deleteCard}
+export { createCard, likeCard,deleteCard}
