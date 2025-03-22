@@ -14,7 +14,9 @@
   </header>
   <main class="content">
     <section class="profile page__section">
-      <div class="profile__image" style="background-image: url('<%=require('./images/avatar.jpg')%>');"></div>
+      <div class="profile__image" style="background-image: url('<%=require('./images/avatar.jpg')%>')">
+        <img src="<%=require('./images/edit-profile.svg')%>" class="profile__image-edit" />
+      </div>
       <div class="profile__info">
         <h1 class="profile__title">Жак-Ив Кусто</h1>
         <button class="profile__edit-button" type="button"></button>
@@ -86,6 +88,23 @@
       <p class="popup__caption"></p>
     </div>
   </div>
+  <div>
+    <div class="popup popup_type_avatar popup_is-animated">
+      <div class="popup__content">
+        <button type="button" class="popup__close"></button>
+        <h3 class="popup__title">Обновить аватар</h3>
+        <form class="popup__form" name="edit-avatar" id="edit-avatar" novalidate>
+          <input name="avatar-input" class="popup__input popup__input_type_avatar" id="avatar-input"  placeholder="Ссылка на аватар" 
+                type="url"
+                required />
+          <span class="avatar-input-error"></span>
+          <button type="submit" class="button popup__button">
+            Сохранить
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
 <template id="card-template">
@@ -95,7 +114,10 @@
     <div class="card__description">
       <h2 class="card__title">
       </h2>
-      <button type="button" class="card__like-button"></button>
+      <div class="card__container-like">
+        <button type="button" class="card__like-button"></button>
+        <span class="card__like-count"></span>
+      </div>
     </div>
   </li>
 </template>

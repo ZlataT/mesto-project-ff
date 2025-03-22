@@ -7,6 +7,7 @@
   background-size: cover;
   background-position: center;
   margin: 0 29px 0 0;
+  position: relative;
 }
 
 @media screen and (max-width: 740px) {
@@ -19,4 +20,33 @@
   .profile__image {
     margin-right: 0;
   }
+}
+
+
+.profile__image::after{
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: inherit;
+  opacity: 0;
+}
+
+.profile__image:hover::after{
+  opacity: 1;
+}
+
+.profile__image:hover .profile__image-edit{
+  opacity: 1;
+}
+
+.profile__image-edit{
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  width: 26px;
+  height: 26px;
+  opacity: 0;
+  z-index: 2;
 }

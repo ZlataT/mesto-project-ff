@@ -1,4 +1,5 @@
-import {initialCards} from "./scripts/cards.js"
+
+import {fetchNewCard, checkResponse, fetchUserData, fetchCards, fetchEditProfile, fetchEditAvatar} from './scripts/api.js'
 import './pages/index.css'
 import {openModal, closeModal} from './scripts/modal.js'
 import {createCard, likeCard, deleteCard} from './scripts/card.js'
@@ -9,21 +10,53 @@ import {setEventListeners, enableValidation, validationConfig, clearValidation }
 const page = document.querySelector('.page'); //все элементы body 
 const cardsContainer = page.querySelector('.places__list'); //элемент куда будем вставлять карточки
 
+
+
 const popupTypeEditProfile = page.querySelector('.popup_type_edit'); //модалка редактирования профиля
 const profileEditButton = page.querySelector('.profile__edit-button');
 
 const popupTypeNewCard = page.querySelector('.popup_type_new-card'); //модалка создания новой карточки
 const cardAddButton= page.querySelector('.profile__add-button');
 
+const popupAvatar = page.querySelector('.popup_type_avatar');
+const buttonEditAvatar = page.querySelector('.profile__image');
+const avatarForm = document.forms['edit-avatar'];
+const inputLinkAvatar = avatarForm.name;
+
 const buttonsClosePopups = page.querySelectorAll('.popup__close');
 const formElement = document.querySelector('.popup__form');
 
+function renderLoading (isLoading, formElement){
+  const buttonElement = formElement.querySelector('.popup__button')
+  if (isLoading) {
+		buttonElement.setAttribute('data-text', buttonElement.textContent)
+		buttonElement.textContent = 'Сохранение...'
+	} else {
+		buttonElement.textContent = buttonElement.getAttribute('data-text')
+		buttonElement.removeAttribute('data-text')
+	}
+}
 
-// @todo: Вывести карточки на страницу
-initialCards.forEach(function(element){
-  const cardElement = createCard(element.name, element.link, deleteCard, likeCard, openPopupCard);
-  cardsContainer.append(cardElement);
+buttonEditAvatar.addEventListener('click', function(){
+  avatarForm.reset();
+  openModal(popupAvatar);
 })
+
+avatarForm.addEventListener('submit', editAvatarSumbit);
+
+
+function editAvatarSumbit(evt){
+  evt.preventDefault()
+  renderLoading(true, avatarForm)
+  const avatarLink = inputLinkAvatar.value;
+  fetchEditAvatar(avatarLink)
+    .then(avatar =>{
+      buttonEditAvatar.style.backgroundImage = `url(${avatar.avatar})`;
+      avatarForm.reset();
+      closeModal(popupAvatar);
+    })
+    .catch(err => console.log(err))
+}
 
 // слушатель на кнопку закрытия модального окна
 buttonsClosePopups.forEach (function (button){
@@ -33,19 +66,23 @@ buttonsClosePopups.forEach (function (button){
   });
 });
 
+
+
 //добавление новой карточки
 function handleAddCardFormSubmit(evt){
   evt.preventDefault();
-  
+  renderLoading(true, popupFormNewPlace)
   const namePlace = formPlaceName.value;
   const linkPlaceImage = formLinkImgPlace.value;
   
-  const newCard = createCard (namePlace, linkPlaceImage, deleteCard, likeCard, openPopupCard)
-  
-  cardsContainer.prepend(newCard);
-  closeModal(popupTypeNewCard);
-  
-  popupFormNewPlace.reset();
+  fetchNewCard(namePlace, linkPlaceImage)
+    .then((userData)=>{
+      const newCard = createCard (namePlace, linkPlaceImage, deleteCard, likeCard, openPopupCard);
+      cardsContainer.prepend(newCard);
+      closeModal(popupTypeNewCard);
+      
+      popupFormNewPlace.reset();
+    })
 }
 
 
@@ -72,14 +109,19 @@ function openEditProfilePopup(){
 //функиция сохрания изменений
 function handleProfileFormSubmit(evt) {
   evt.preventDefault();
-
+  renderLoading(true, modalEditProfile)
   const newName = nameEditProfileInput.value;
   const newDescription = descriptionEditProfileInput.value;
-  
-  profileTitle.textContent = newName;
-  profileDescription.textContent = newDescription;
 
-  closeModal(popupTypeEditProfile);
+  fetchEditProfile(newName, newDescription)
+    .then((userData) => {
+      profileTitle.textContent = userData.name;
+      profileDescription.textContent = userData.about;
+      closeModal(popupTypeEditProfile);
+    })
+    .catch((err) => {
+      console.error('Ошибка при обновлении профиля:', err);
+    });
 }
 
 modalEditProfile.addEventListener('submit', handleProfileFormSubmit); 
@@ -128,21 +170,23 @@ cardAddButton.addEventListener('click', () => {
 
 enableValidation(validationConfig);
 
-fetch('https://nomoreparties.co/v1/wff-cohort-34/cards', {
-  headers: {
-    authorization: '9e1f29a7-b0e6-43a9-ad98-57be15c5122f'
-  }
-})
-  .then(res => res.json())
-  .then((result) => {
-    console.log(result);
+
+
+
+//вывод всех карточек если запросы верны
+Promise.all([fetchUserData(), fetchCards()])
+  .then(([userData, cards]) => {
+    //записываем данные о себе с сервера
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    buttonEditAvatar.style.backgroundImage = `url(${userData.avatar})`;
+
+    cards.forEach((cardData) => {
+      const cardElement = createCard(cardData, cardData._id, userData._id, deleteCard, likeCard, openPopupCard);
+      cardsContainer.append(cardElement);
+    });
+  })
+  .catch((err) => {
+    console.error('Ошибка при загрузке данных:', err);
   });
 
-  fetch ('https://nomoreparties.co/v1/:wff-cohort-34/users/me',{
-    method: 'GET', 
-    headers: {
-      authorization: '9e1f29a7-b0e6-43a9-ad98-57be15c5122f'
-    },
-  })
-   
-  
