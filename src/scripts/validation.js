@@ -1,17 +1,5 @@
 // ----------------валидация форм---------------
 
-
-
-
-const validationConfig = {
-    formSelector: '.popup__form',
-    inputSelector: '.popup__input',
-    submitButtonSelector: '.popup__button',
-    inactiveButtonClass: 'popup__button_disabled',
-    inputErrorClass: 'popup__input_type_error',
-    errorClass: 'popup__error_visible'
-  }
-
 //показ ошибки валидации
 const showInputError = (formElement, inputElement, errorMassage, setting) =>{
   const  errorElement = formElement.querySelector(`.${inputElement.id}-error`);
@@ -37,7 +25,7 @@ const checkInputValidity = (formElement, inputElement, setting) =>{
   };
 }
 
-const hasInvalidInput = (inputList, validationConfig) => {
+const hasInvalidInput = (inputList) => {
 	return inputList.some(inputElement => {
 		return !inputElement.validity.valid
     })
@@ -92,4 +80,4 @@ toggleButtonState(inputList, buttonElement, setting);
 }
 
 
-export {setEventListeners, enableValidation, validationConfig, clearValidation}
+export {enableValidation, clearValidation}

@@ -1,9 +1,9 @@
 
-import {fetchNewCard, checkResponse, fetchUserData, fetchCards, fetchEditProfile, fetchEditAvatar} from './scripts/api.js'
+import {fetchNewCard, fetchUserData, fetchCards, fetchEditProfile, fetchEditAvatar} from './scripts/api.js'
 import './pages/index.css'
 import {openModal, closeModal} from './scripts/modal.js'
 import {createCard, likeCard, deleteCard} from './scripts/card.js'
-import {setEventListeners, enableValidation, validationConfig, clearValidation } from './scripts/validation.js'
+import {enableValidation, clearValidation } from './scripts/validation.js'
 
 
 // @todo: DOM узлы
@@ -24,7 +24,15 @@ const avatarForm = document.forms['edit-avatar'];
 const inputLinkAvatar = avatarForm.name;
 
 const buttonsClosePopups = page.querySelectorAll('.popup__close');
-const formElement = document.querySelector('.popup__form');
+
+const validationConfig = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+}
 
 function renderLoading (isLoading, formElement){
   const buttonElement = formElement.querySelector('.popup__button')
@@ -56,6 +64,9 @@ function editAvatarSumbit(evt){
       closeModal(popupAvatar);
     })
     .catch(err => console.log(err))
+    .finally(()=>{
+      renderLoading(false, avatarForm)
+    })
 }
 
 // слушатель на кнопку закрытия модального окна
@@ -76,15 +87,18 @@ function handleAddCardFormSubmit(evt){
   const linkPlaceImage = formLinkImgPlace.value;
   
   fetchNewCard(namePlace, linkPlaceImage)
-    .then((userData)=>{
-      const newCard = createCard (namePlace, linkPlaceImage, deleteCard, likeCard, openPopupCard);
+    .then((cardData)=>{
+      const newCard = createCard (cardData, cardData._id, userData._id, deleteCard, likeCard, openPopupCard);
+      
       cardsContainer.prepend(newCard);
       closeModal(popupTypeNewCard);
       
       popupFormNewPlace.reset();
     })
+    .finally(()=>{
+      renderLoading(false, popupFormNewPlace)
+    })
 }
-
 
 //------------ модалка редактирования профиля--------------
 
@@ -103,6 +117,7 @@ profileEditButton.addEventListener('click', openEditProfilePopup);
 function openEditProfilePopup(){
   nameEditProfileInput.value = profileTitle.textContent;
   descriptionEditProfileInput.value = profileDescription.textContent;
+  clearValidation(modalEditProfile, validationConfig);
   openModal(popupTypeEditProfile);
 }
 
@@ -121,7 +136,11 @@ function handleProfileFormSubmit(evt) {
     })
     .catch((err) => {
       console.error('Ошибка при обновлении профиля:', err);
-    });
+    })
+    .finally(()=>{
+      renderLoading(false, modalEditProfile)
+    })
+    
 }
 
 modalEditProfile.addEventListener('submit', handleProfileFormSubmit); 
@@ -130,7 +149,9 @@ modalEditProfile.addEventListener('submit', handleProfileFormSubmit);
 
 // открытие окна
 cardAddButton.addEventListener('click', function(){
-  openModal(popupTypeNewCard);});
+  clearValidation(popupFormNewPlace, validationConfig);
+  openModal(popupTypeNewCard);
+});
 
 //форма добавления изображения 
 
@@ -155,22 +176,7 @@ function openPopupCard(link, name){
 }
 
 
-//включение валидации 
-
-
-
-//вешание очистки ошибок валидации на формы
-profileEditButton.addEventListener('click', () => {
-  clearValidation(modalEditProfile, validationConfig);
-});
-
-cardAddButton.addEventListener('click', () => {
-  clearValidation(popupFormNewPlace, validationConfig);
-});
-
 enableValidation(validationConfig);
-
-
 
 
 //вывод всех карточек если запросы верны
